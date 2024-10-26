@@ -25,18 +25,18 @@ class Player(GameSprite):
         """left racket - стрелки вверх/down"""
         keys = key.get_pressed()
 
-        if keys[K_UP] and self.rect.y > 5:
+        if keys[K_w] and self.rect.y > 5:
             self.rect.y -= self.speed
-        if keys[K_DOWN] and self.rect.y < win_height - 70:
+        if keys[K_s] and self.rect.y < win_height - 70:
             self.rect.y += self.speed
 
     def move_right(self):
         """right racket - клавиши W/S"""
         keys = key.get_pressed()
 
-        if keys[K_w] and self.rect.y > 5:
+        if keys[K_UP] and self.rect.y > 5:
             self.rect.y -= self.speed
-        if keys[K_s] and self.rect.y < win_height - 70:
+        if keys[K_DOWN] and self.rect.y < win_height - 70:
             self.rect.y += self.speed
 
 
@@ -52,6 +52,13 @@ window.fill(back)
 racket1 = Player('racket.png', 30, 300, 4, 80, 190)
 racket2 = Player('racket.png', 880, 300, 4, 80, 190)
 ball = Player('ppball.png', 500, 300, 4, 50, 50)
+
+# text
+font.init()
+font = font.Font(None, 85)
+
+lose1 = font.render('PLAYER 1 LOSE!!!', True, 'red')
+lose2 = font.render('PLAYER 2 LOSE!!!', True, 'red')
 
 # game cycle
 game = True
@@ -82,8 +89,23 @@ while game:
             speed_x *= -1
             speed_y *= -1
 
+        # if ball достигает границ, меняем направление his move
+        if ball.rect.y > win_height-100 or ball.rect.y < 0:
+            speed_y *= -1
+
+        # if ball fly to the left - lose 1 player
+        if ball.rect.x < 0:
+            finish = True
+            window.blit(lose1, (280, 340))
+
+        # if ball fly to the left - lose 2 player
+        if ball.rect.x > win_width:
+            finish = True
+            window.blit(lose2, (280, 340))
+
         racket1.reset()
         racket2.reset()
         ball.reset()
+
     display.update()
     clock.tick(FPS)
